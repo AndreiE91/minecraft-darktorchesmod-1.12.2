@@ -1,0 +1,16 @@
+[
+{
+  "modid": "darktorches",
+  "name": "Dark Torches",
+  "description": "Gone are the days when torches did as much as the sun. To harness such powers one may have to fight hard battles against three-headed undead lords.",
+  "version": "1.0.0",
+  "mcversion": "1.12.2",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Em1"],
+  "credits": "The Forge and FML guys, Em1 himself.",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
