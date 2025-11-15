@@ -63,5 +63,18 @@ public class ModRecipes {
                 'C', ModItems.superchargedCoal
         );
         event.getRegistry().register(ultrabrightLampRecipe.setRegistryName("darktorches", "ultrabright_lamp"));
+
+        // Industrial Light
+        ShapedOreRecipe industrialLightRecipe = new ShapedOreRecipe(
+                new ResourceLocation("darktorches", "industrial_light"),
+                new ItemStack(ModBlocks.industrialLight),
+                "GSG",
+                "SDS",
+                "GSG",
+                'G', Blocks.GLOWSTONE,
+                'S', Blocks.SEA_LANTERN,
+                'D', Blocks.BEDROCK
+        );
+        event.getRegistry().register(industrialLightRecipe.setRegistryName("darktorches", "industrial_light"));
     }
 }

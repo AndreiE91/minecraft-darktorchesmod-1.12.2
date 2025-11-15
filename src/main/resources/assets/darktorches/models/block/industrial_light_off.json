@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "darktorches:blocks/industrial_light_off"
+  }
+}

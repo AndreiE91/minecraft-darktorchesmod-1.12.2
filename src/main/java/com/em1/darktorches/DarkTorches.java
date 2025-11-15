@@ -5,12 +5,13 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.logging.log4j.Logger;
-
 import java.io.File;
 import java.lang.reflect.Field;
 
@@ -23,6 +24,9 @@ public class DarkTorches {
     // Configurable values
     private static float globalLightMultiplier = 0.5F;
     private static float ultrabrightTorchLight = 15.0F;
+    private static int industrialLightMaxEnergy = 10000;
+    private static int industrialLightEnergyPerTick = 50;
+    private static int industrialLightMaxReceiveEnergyPerTick = 100;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -30,6 +34,8 @@ public class DarkTorches {
         File configFile = new File(event.getModConfigurationDirectory(), "darktorches.cfg");
         config = new Configuration(configFile);
         syncConfig();
+
+        GameRegistry.registerTileEntity(TileEntityIndustrialLight.class, new ResourceLocation("darktorches", "industrial_light"));
     }
 
     private void syncConfig() {
@@ -49,9 +55,45 @@ public class DarkTorches {
                 "Base light level for the ultrabright torch (not scaled by multiplier)"
         );
 
+        industrialLightMaxEnergy = config.getInt(
+                "industrialLightMaxEnergy",
+                Configuration.CATEGORY_GENERAL,
+                industrialLightMaxEnergy,
+                1000, 10000000,
+                "Maximum energy storage for Industrial Light (FE)"
+        );
+        
+        industrialLightEnergyPerTick = config.getInt(
+                "industrialLightEnergyPerTick",
+                Configuration.CATEGORY_GENERAL,
+                industrialLightEnergyPerTick,
+                1, 10000,
+                "Energy consumed per tick by Industrial Light (FE/t)"
+        );
+
+        industrialLightMaxReceiveEnergyPerTick = config.getInt(
+                "industrialLightMaxReceiveEnergyPerTick",
+                Configuration.CATEGORY_GENERAL,
+                industrialLightMaxReceiveEnergyPerTick,
+                1, 100000,
+                "Max energy received per tick by Industrial Light (FE/t)"
+        );
+
         if (config.hasChanged()) {
             config.save();
         }
+    }
+
+    public static int getIndustrialLightMaxEnergy() {
+        return industrialLightMaxEnergy;
+    }
+
+    public static int getIndustrialLightEnergyPerTick() {
+        return industrialLightEnergyPerTick;
+    }
+
+    public static int getIndustrialLightMaxReceiveEnergyPerTick() {
+        return industrialLightMaxReceiveEnergyPerTick;
     }
 
     @Mod.EventHandler
@@ -73,13 +115,25 @@ public class DarkTorches {
                     continue;
                 if (ModBlocks.ultrabrightLampOn != null && block == ModBlocks.ultrabrightLampOn)
                     continue;
+                if (ModBlocks.industrialLight != null && block == ModBlocks.industrialLight)
+                    continue;
 
                 IBlockState state = block.getDefaultState();
                 int original = block.getLightValue(state);
                 if (original > 0) {
-                    int newValue = Math.min(15, Math.round(original * globalLightMultiplier));
+                    // Check if this block gets reduced penalty
+                    boolean reducedPenalty = block == Blocks.GLOWSTONE || 
+                                            block == Blocks.END_ROD || 
+                                            block == Blocks.REDSTONE_LAMP || 
+                                            block == Blocks.FIRE || 
+                                            block == Blocks.LAVA || 
+                                            block == Blocks.FLOWING_LAVA;
+                    
+                    float multiplier = reducedPenalty ? Math.min(globalLightMultiplier * 1.5F, 1.0F) : globalLightMultiplier;
+                    int newValue = Math.min(15, Math.round(original * multiplier));
                     lightValueField.setInt(block, newValue);
-                    logger.debug("Adjusted {} from {} to {}", block.getRegistryName(), original, newValue);
+                    logger.debug("Adjusted {} from {} to {} (multiplier: {})", 
+                                block.getRegistryName(), original, newValue, multiplier);
                 }
             }
 

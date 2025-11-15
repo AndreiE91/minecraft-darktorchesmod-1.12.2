@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "active=false": { "model": "darktorches:industrial_light_off" },
+    "active=true": { "model": "darktorches:industrial_light_on" }
+  }
+}

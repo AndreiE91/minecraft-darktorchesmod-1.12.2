@@ -19,6 +19,8 @@ public class ModBlocks {
     public static Block ultrabrightGlowstone;
     public static Block ultrabrightLampOff;
     public static Block ultrabrightLampOn;
+    public static Block industrialLight;
+    
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -26,12 +28,15 @@ public class ModBlocks {
         ultrabrightGlowstone = new BlockUltrabrightGlowstone();
         ultrabrightLampOff = new BlockUltrabrightLamp(false);
         ultrabrightLampOn = new BlockUltrabrightLamp(true);
+        industrialLight = new BlockIndustrialLight();
+
         
         event.getRegistry().registerAll(
             ultrabrightTorch,
             ultrabrightGlowstone,
             ultrabrightLampOff,
-            ultrabrightLampOn
+            ultrabrightLampOn,
+            industrialLight
         );
     }
 
@@ -40,6 +45,7 @@ public class ModBlocks {
         event.getRegistry().register(new ItemBlock(ultrabrightTorch).setRegistryName(ultrabrightTorch.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ultrabrightGlowstone).setRegistryName(ultrabrightGlowstone.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ultrabrightLampOff).setRegistryName(ultrabrightLampOff.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(industrialLight).setRegistryName(industrialLight.getRegistryName()));
     }
 
     @SubscribeEvent
@@ -51,5 +57,7 @@ public class ModBlocks {
             new ModelResourceLocation("darktorches:ultrabright_glowstone", "inventory"));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ultrabrightLampOff), 0,
             new ModelResourceLocation("darktorches:ultrabright_lamp", "inventory"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(industrialLight), 0,
+            new ModelResourceLocation("darktorches:industrial_light", "inventory"));
     }
 }
