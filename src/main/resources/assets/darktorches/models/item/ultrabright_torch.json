@@ -1,3 +1,6 @@
 {
-  "parent": "darktorches:block/ultrabright_torch"
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "darktorches:blocks/ultrabright_torch"
+  }
 }

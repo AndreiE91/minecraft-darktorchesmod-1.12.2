@@ -38,7 +38,7 @@ public class DarkTorches {
                 Configuration.CATEGORY_GENERAL,
                 globalLightMultiplier,
                 0f, 5f,
-                "Multiplier for all light-emitting blocks (0–5x)"
+                "Multiplier for all light-emitting blocks"
         );
 
         ultrabrightTorchLight = config.getFloat(
@@ -66,7 +66,12 @@ public class DarkTorches {
             lightValueField.setAccessible(true);
 
             for (Block block : Block.REGISTRY) {
+                // Skip all ultrabright blocks
                 if (ModBlocks.ultrabrightTorch != null && block == ModBlocks.ultrabrightTorch)
+                    continue;
+                if (ModBlocks.ultrabrightGlowstone != null && block == ModBlocks.ultrabrightGlowstone)
+                    continue;
+                if (ModBlocks.ultrabrightLampOn != null && block == ModBlocks.ultrabrightLampOn)
                     continue;
 
                 IBlockState state = block.getDefaultState();
@@ -78,10 +83,23 @@ public class DarkTorches {
                 }
             }
 
+            // Set ultrabright torch light
             if (ModBlocks.ultrabrightTorch != null) {
                 int finalTorchValue = Math.min(15, Math.round(ultrabrightTorchLight));
                 lightValueField.setInt(ModBlocks.ultrabrightTorch, finalTorchValue);
                 logger.info("Set ultrabright torch light to {}", finalTorchValue);
+            }
+
+            // Set ultrabright glowstone light
+            if (ModBlocks.ultrabrightGlowstone != null) {
+                lightValueField.setInt(ModBlocks.ultrabrightGlowstone, 15);
+                logger.info("Set ultrabright glowstone light to 15");
+            }
+
+            // Set ultrabright lamp light
+            if (ModBlocks.ultrabrightLampOn != null) {
+                lightValueField.setInt(ModBlocks.ultrabrightLampOn, 15);
+                logger.info("Set ultrabright lamp light to 15");
             }
 
         } catch (Exception e) {
